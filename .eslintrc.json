@@ -3,8 +3,7 @@
     "ecmaVersion": 2017,
     "sourceType": "script",
     "ecmaFeatures": {
-      "impliedStrict": true,
-      "experimentalObjectRestSpread": true
+      "impliedStrict": true
     }
   },
   "env": {

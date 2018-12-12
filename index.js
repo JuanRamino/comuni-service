@@ -1,22 +1,22 @@
 const fs = require('fs');
-var path = require('path');
+const path = require('path');
 const request = require('request');
 const async = require('async');
 const yauzl = require('yauzl');
 
-const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv';
+const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv'; // eslint-disable-line
 const elencoComuniOldUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-soppressi.zip';
 const fileOutPath = 'data';
-const fileOutComuni = 'data/comuni.csv';
+const fileOutComuni = 'data/comuni.csv'; // eslint-disable-line
 const fileOutComuniOld = 'data/comuni-old.zip';
 
 async.series([
   function(cb) {
-    getElencoComuni(elencoComuniOldUrl, fileOutComuniOld, cb)
+    getElencoComuni(elencoComuniOldUrl, fileOutComuniOld, cb);
   },
   function(cb) {
-    unzip(elencoComuniOldUrl, fileOutPath, cb)
-  }
+    unzip(elencoComuniOldUrl, fileOutPath, cb);
+  },
 ], function(err) {
   if (err) {
     return undefined;
@@ -27,15 +27,15 @@ async.series([
 
 function getElencoComuni(url, output, cb) {
   request
-  .get(url)
-  .on('error', function(err) {
-    console.log(err);
-    cb(err);
-  })
-  .on('end', function() {
-    cb();
-  })
-  .pipe(fs.createWriteStream(output))
+    .get(url)
+    .on('error', function(err) {
+      console.log(err);
+      cb(err);
+    })
+    .on('end', function() {
+      cb();
+    })
+    .pipe(fs.createWriteStream(output));
 }
 
 function unzip(input, output, cb) {
@@ -45,7 +45,7 @@ function unzip(input, output, cb) {
       cb(err);
     }
     zipfile.readEntry();
-    zipfile.on("entry", function(entry) {
+    zipfile.on('entry', function(entry) {
       if (/\/$/.test(entry.fileName)) {
         // Directory file names end with '/'.
         // Note that entires for directories themselves are optional.
@@ -58,7 +58,7 @@ function unzip(input, output, cb) {
             console.log(err);
             cb(err);
           }
-          readStream.on("end", function() {
+          readStream.on('end', function() {
             zipfile.readEntry();
           });
 
@@ -67,6 +67,6 @@ function unzip(input, output, cb) {
         });
       }
     });
-    zipfile.on("close", cb)
+    zipfile.on('close', cb);
   });
 }
