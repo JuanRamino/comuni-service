@@ -4,32 +4,72 @@ const request = require('request');
 const async = require('async');
 const yauzl = require('yauzl');
 
-const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv'; // eslint-disable-line
+const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv';
+const fileOutComuni = 'data/comuni.csv';
+
 const elencoComuniOldUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-soppressi.zip';
-const fileOutPath = 'data';
-const fileOutComuni = 'data/comuni.csv'; // eslint-disable-line
+const fileOutComuniOldCsv = 'data/comuni-old.csv';
 const fileOutComuniOld = 'data/comuni-old.zip';
 
+const elencoComuniRenameddUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-denominazioni-precedenti.zip';
+const fileOutComuniRenamed = 'data/comuni-renamed.zip';
+const fileOutComuniRenamedCsv = 'data/comuni-renamed.csv';
+
 async.series([
+  function(cb) {
+    getElencoComuni(elencoComuniUrl, fileOutComuni, cb);
+  },
   function(cb) {
     getElencoComuni(elencoComuniOldUrl, fileOutComuniOld, cb);
   },
   function(cb) {
-    unzip(elencoComuniOldUrl, fileOutPath, cb);
+    unzip(fileOutComuniOld, fileOutComuniOldCsv, cb);
+  },
+  function(cb) {
+    getElencoComuni(elencoComuniRenameddUrl, fileOutComuniRenamed, cb);
+  },
+  function(cb) {
+    unzip(fileOutComuniRenamed, fileOutComuniRenamedCsv, cb);
+  },
+  function(cb) {
+    checkFiles([
+      fileOutComuni,
+      fileOutComuniOldCsv,
+      fileOutComuniRenamedCsv,
+    ], cb);
   },
 ], function(err) {
   if (err) {
-    return undefined;
+    return console.log(err);
   } else {
     console.log('DONE');
   }
 });
 
+function checkFiles(files, cb) {
+  let globalError;
+  const checkedFiles = files.map(function(file) {
+    let error;
+    if (!fs.existsSync(file)) {
+      error = true;
+      globalError = true;
+    }
+    return {
+      file: file,
+      error: error,
+    };
+  });
+
+  if (globalError) {
+    return cb(checkedFiles);
+  }
+  return cb();
+}
+
 function getElencoComuni(url, output, cb) {
   request
     .get(url)
     .on('error', function(err) {
-      console.log(err);
       cb(err);
     })
     .on('end', function() {
@@ -39,9 +79,8 @@ function getElencoComuni(url, output, cb) {
 }
 
 function unzip(input, output, cb) {
-  yauzl.open(fileOutComuniOld, {lazyEntries: true}, function(err, zipfile) {
+  yauzl.open(input, {lazyEntries: true}, function(err, zipfile) {
     if (err) {
-      console.log(err);
       cb(err);
     }
     zipfile.readEntry();
@@ -55,18 +94,19 @@ function unzip(input, output, cb) {
         // file entry
         zipfile.openReadStream(entry, function(err, readStream) {
           if (err) {
-            console.log(err);
             cb(err);
           }
           readStream.on('end', function() {
             zipfile.readEntry();
           });
 
-          const filePath = `${output}/${path.basename(entry.fileName)}`;
-          readStream.pipe(fs.createWriteStream(filePath));
+          if (path.extname(entry.fileName) === '.csv') {
+            readStream.pipe(fs.createWriteStream(output));
+          } else {
+            cb();
+          }
         });
       }
     });
-    zipfile.on('close', cb);
   });
 }
