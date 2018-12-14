@@ -16,31 +16,31 @@ const fileOutComuniRenamed = 'data/comuni-renamed.zip';
 const fileOutComuniRenamedCsv = 'data/comuni-renamed.csv';
 
 async.series([
-  function(cb) {
+  (cb) => {
     getElencoComuni(elencoComuniUrl, fileOutComuni, cb);
   },
-  function(cb) {
+  (cb) => {
     getElencoComuni(elencoComuniOldUrl, fileOutComuniOld, cb);
   },
-  function(cb) {
+  (cb) => {
     unzip(fileOutComuniOld, fileOutComuniOldCsv, cb);
   },
-  function(cb) {
+  (cb) => {
     getElencoComuni(elencoComuniRenameddUrl, fileOutComuniRenamed, cb);
   },
-  function(cb) {
+  (cb) => {
     unzip(fileOutComuniRenamed, fileOutComuniRenamedCsv, cb);
   },
-  function(cb) {
+  (cb) => {
     checkFiles([
       fileOutComuni,
       fileOutComuniOldCsv,
       fileOutComuniRenamedCsv,
     ], cb);
   },
-], function(err) {
+], (err) => {
   if (err) {
-    return console.log(err);
+    console.log(err);
   } else {
     console.log('DONE');
   }
@@ -48,15 +48,15 @@ async.series([
 
 function checkFiles(files, cb) {
   let globalError;
-  const checkedFiles = files.map(function(file) {
+  const checkedFiles = files.map((file) => {
     let error;
     if (!fs.existsSync(file)) {
       error = true;
       globalError = true;
     }
     return {
-      file: file,
-      error: error,
+      file,
+      error,
     };
   });
 
@@ -69,22 +69,22 @@ function checkFiles(files, cb) {
 function getElencoComuni(url, output, cb) {
   request
     .get(url)
-    .on('error', function(err) {
+    .on('error', (err) => {
       cb(err);
     })
-    .on('end', function() {
+    .on('end', () => {
       cb();
     })
     .pipe(fs.createWriteStream(output));
 }
 
 function unzip(input, output, cb) {
-  yauzl.open(input, {lazyEntries: true}, function(err, zipfile) {
+  yauzl.open(input, {lazyEntries: true}, (err, zipfile) => {
     if (err) {
-      cb(err);
+      return cb(err);
     }
     zipfile.readEntry();
-    zipfile.on('entry', function(entry) {
+    zipfile.on('entry', (entry) => {
       if (/\/$/.test(entry.fileName)) {
         // Directory file names end with '/'.
         // Note that entires for directories themselves are optional.
@@ -92,11 +92,11 @@ function unzip(input, output, cb) {
         zipfile.readEntry();
       } else {
         // file entry
-        zipfile.openReadStream(entry, function(err, readStream) {
+        zipfile.openReadStream(entry, (err, readStream) => {
           if (err) {
             cb(err);
           }
-          readStream.on('end', function() {
+          readStream.on('end', () => {
             zipfile.readEntry();
           });
 
