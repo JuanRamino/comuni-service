@@ -3,6 +3,7 @@ const path = require('path');
 const request = require('request');
 const async = require('async');
 const yauzl = require('yauzl');
+const parse = require('csv-parse/lib/sync');
 
 const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv';
 const fileOutComuni = 'data/comuni.csv';
@@ -38,6 +39,9 @@ async.series([
       fileOutComuniRenamedCsv,
     ], cb);
   },
+  (cb) => {
+    csvToJson(fileOutComuni, cb);
+  },
 ], (err) => {
   if (err) {
     console.log(err);
@@ -45,6 +49,15 @@ async.series([
     console.log('DONE');
   }
 });
+
+function csvToJson(input, cb) {
+  const csvToString = fs.readFileSync(input, 'utf8');
+  // csvToString lose UTF8 encoding
+  const comuni = parse(csvToString, { delimiter: ';', columns: true });
+
+  console.log(comuni[0]);
+  cb();
+}
 
 function checkFiles(files, cb) {
   let globalError;

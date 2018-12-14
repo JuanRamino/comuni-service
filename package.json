@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "async": "^2.6.1",
-    "csv-parse": "^4.1.0",
+    "csv-parse": "^4.2.0",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
