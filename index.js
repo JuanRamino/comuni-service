@@ -4,6 +4,8 @@ const request = require('request');
 const async = require('async');
 const yauzl = require('yauzl');
 const parse = require('csv-parse/lib/sync');
+const _ = require('lodash');
+const iconv = require('iconv-lite');
 
 const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv';
 const fileOutComuni = 'data/comuni.csv';
@@ -40,7 +42,18 @@ async.series([
     ], cb);
   },
   (cb) => {
-    csvToJson(fileOutComuni, cb);
+    fixEncoding([
+      fileOutComuni,
+      fileOutComuniOldCsv,
+      fileOutComuniRenamedCsv,
+    ], cb);
+  },
+  (cb) => {
+    csvToJson({
+      comuni: fileOutComuni,
+      comuniOld: fileOutComuniOldCsv,
+      fileOutComuniRenamed: fileOutComuniRenamedCsv,
+    }, cb);
   },
 ], (err) => {
   if (err) {
@@ -50,13 +63,29 @@ async.series([
   }
 });
 
-function csvToJson(input, cb) {
-  const csvToString = fs.readFileSync(input, 'utf8');
-  // csvToString lose UTF8 encoding
-  const comuni = parse(csvToString, { delimiter: ';', columns: true });
-
-  console.log(comuni[0]);
+function csvToJson(mappedFiles, cb) {
+  const parsed = _.mapValues(mappedFiles, (file) =>
+    parse(fs.readFileSync(file, 'utf8'), { delimiter: ';', columns: true }),
+  );
+  console.log(parsed);
   cb();
+}
+
+function fixEncoding(files, finalCb) {
+  async.each(files, (file, cb) => {
+    // Convert encoding streaming example
+    fs.createReadStream(file)
+      .pipe(iconv.decodeStream('win1252'))
+      .pipe(iconv.encodeStream('utf8'))
+      .pipe(fs.createWriteStream(file));
+      
+    cb();
+  }, (err) => {
+    if (err) {
+      return finalCb(err);
+    }
+    finalCb();
+  });
 }
 
 function checkFiles(files, cb) {
