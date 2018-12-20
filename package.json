@@ -1,8 +1,7 @@
 {
   "name": "comuni-service",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "micro-service to get italian municipality data",
   "repository": {
     "type": "git",
     "url": "https://repo.novigo-consulting.it/scm/mbcs/robot-epc.git"
@@ -15,10 +14,13 @@
   "license": "ISC",
   "scripts": {
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "update:comuni": "node bin/updateComuni.js"
   },
   "dependencies": {
     "async": "^2.6.1",
+    "body-parser": "^1.18.3",
     "csv-parse": "^4.2.0",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",

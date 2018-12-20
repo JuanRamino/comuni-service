@@ -1,3 +1,5 @@
+
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const request = require('request');
@@ -7,19 +9,24 @@ const parse = require('csv-parse/lib/sync');
 const _ = require('lodash');
 const iconv = require('iconv-lite');
 
+const { COMUNI_JSON_FILE } = process.env;
+const dataPath = `${__dirname}/../data`;
+
 const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv';
-const fileOutComuni = 'data/tmp/comuni.csv';
-const fileComuni = 'data/comuni.csv';
+const fileOutComuni = `${dataPath}/tmp/comuni.csv`;
+const fileComuni = `${dataPath}/comuni.csv`;
 
 const elencoComuniOldUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-soppressi.zip';
-const fileOutComuniOldCsv = 'data/tmp/comuni-old.csv';
-const fileOutComuniOld = 'data/tmp/comuni-old.zip';
-const fileComuniOld = 'data/comuni-old.csv';
+const fileOutComuniOldCsv = `${dataPath}/tmp/comuni-old.csv`;
+const fileOutComuniOld = `${dataPath}/tmp/comuni-old.zip`;
+const fileComuniOld = `${dataPath}/comuni-old.csv`;
 
 const elencoComuniRenameddUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-denominazioni-precedenti.zip';
-const fileOutComuniRenamed = 'data/tmp/comuni-renamed.zip';
-const fileOutComuniRenamedCsv = 'data/tmp/comuni-renamed.csv';
-const fileComuniRenamed = 'data/comuni-renamed.csv';
+const fileOutComuniRenamed = `${dataPath}/tmp/comuni-renamed.zip`;
+const fileOutComuniRenamedCsv = `${dataPath}/tmp/comuni-renamed.csv`;
+const fileComuniRenamed = `${dataPath}/comuni-renamed.csv`;
+
+const jsonFile = `${dataPath}/${COMUNI_JSON_FILE}`;
 
 async.series([
   (cb) => {
@@ -56,7 +63,7 @@ async.series([
       comuni: fileComuni,
       comuniOld: fileComuniOld,
       comuniRenamed: fileComuniRenamed,
-    }, cb);
+    }, jsonFile, cb);
   },
 ], (err) => {
   if (err) {
@@ -66,7 +73,7 @@ async.series([
   }
 });
 
-function csvToJson(mappedFiles, cb) {
+function csvToJson(mappedFiles, jsonOut, cb) {
   const parsed = _.mapValues(mappedFiles, (file) =>
     parse(fs.readFileSync(file, 'utf8'), { delimiter: ';', columns: true })
   );
@@ -89,7 +96,7 @@ function csvToJson(mappedFiles, cb) {
     });
   });
 
-  console.log(comuni);
+  fs.writeFileSync(jsonOut, JSON.stringify(comuni));
 
   cb();
 }
@@ -161,8 +168,6 @@ function unzip(input, output, cb) {
     zipfile.readEntry();
     zipfile.on('entry', (entry) => {
       if (/\/$/.test(entry.fileName)) {
-        // Directory file names end with '/'.
-        // Note that entires for directories themselves are optional.
         // An entry's fileName implicitly requires its parent directories to exist.
         zipfile.readEntry();
       } else {
