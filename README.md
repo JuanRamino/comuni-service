@@ -41,7 +41,7 @@ curl -X GET \
   -H 'Content-Type: application/json'
 ```
 
-- comuni/:comune
+- /comuni/:comune
 ```
 curl -X GET \
   http://127.0.0.1:3009/comuni/brescia \
