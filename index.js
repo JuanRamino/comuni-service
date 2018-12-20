@@ -8,15 +8,18 @@ const _ = require('lodash');
 const iconv = require('iconv-lite');
 
 const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv';
-const fileOutComuni = 'data/comuni.csv';
+const fileOutComuni = 'data/tmp/comuni.csv';
+const fileComuni = 'data/comuni.csv';
 
 const elencoComuniOldUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-soppressi.zip';
-const fileOutComuniOldCsv = 'data/comuni-old.csv';
-const fileOutComuniOld = 'data/comuni-old.zip';
+const fileOutComuniOldCsv = 'data/tmp/comuni-old.csv';
+const fileOutComuniOld = 'data/tmp/comuni-old.zip';
+const fileComuniOld = 'data/comuni-old.csv';
 
 const elencoComuniRenameddUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-denominazioni-precedenti.zip';
-const fileOutComuniRenamed = 'data/comuni-renamed.zip';
-const fileOutComuniRenamedCsv = 'data/comuni-renamed.csv';
+const fileOutComuniRenamed = 'data/tmp/comuni-renamed.zip';
+const fileOutComuniRenamedCsv = 'data/tmp/comuni-renamed.csv';
+const fileComuniRenamed = 'data/comuni-renamed.csv';
 
 async.series([
   (cb) => {
@@ -43,16 +46,16 @@ async.series([
   },
   (cb) => {
     fixEncoding([
-      fileOutComuni,
-      fileOutComuniOldCsv,
-      fileOutComuniRenamedCsv,
+      [fileOutComuni, fileComuni],
+      [fileOutComuniOldCsv, fileComuniOld],
+      [fileOutComuniRenamedCsv, fileComuniRenamed],
     ], cb);
   },
   (cb) => {
     csvToJson({
-      comuni: fileOutComuni,
-      comuniOld: fileOutComuniOldCsv,
-      fileOutComuniRenamed: fileOutComuniRenamedCsv,
+      comuni: fileComuni,
+      comuniOld: fileComuniOld,
+      comuniRenamed: fileComuniRenamed,
     }, cb);
   },
 ], (err) => {
@@ -65,21 +68,51 @@ async.series([
 
 function csvToJson(mappedFiles, cb) {
   const parsed = _.mapValues(mappedFiles, (file) =>
-    parse(fs.readFileSync(file, 'utf8'), { delimiter: ';', columns: true }),
+    parse(fs.readFileSync(file, 'utf8'), { delimiter: ';', columns: true })
   );
-  console.log(parsed);
+
+  const { comuni, comuniOld, comuniRenamed } = parsed;
+
+  comuniRenamed.forEach((comuneRenamed) => {
+    const index = _.findIndex(comuni, ['Denominazione in italiano', comuneRenamed['Comune cui è associata la denominazione precedente']]);
+    if (index > -1) {
+      comuni[index]['Denominazione precedente'] = comuneRenamed['Denominazione precedente'];
+    }
+  });
+
+  comuniOld.forEach((comuneOld) => {
+    comuni.push({
+      'Codice Provincia (1)': comuneOld['Codice Provincia'],
+      'Codice Comune formato alfanumerico': comuneOld['Codice Istat del Comune'],
+      'Denominazione in italiano': comuneOld['Denominazione'],
+      'Sigla automobilistica': comuneOld['Sigla Automobilistica della Provincia'],
+    });
+  });
+
+  console.log(comuni);
+
   cb();
 }
 
 function fixEncoding(files, finalCb) {
   async.each(files, (file, cb) => {
-    // Convert encoding streaming example
-    fs.createReadStream(file)
+    // Convert encoding stream
+    const stream = fs.createReadStream(file[0])
       .pipe(iconv.decodeStream('win1252'))
       .pipe(iconv.encodeStream('utf8'))
-      .pipe(fs.createWriteStream(file));
-      
-    cb();
+      .pipe(fs.createWriteStream(file[1]));
+    
+    let error; 
+    stream.on('error', function (err) {
+      error = true;
+      cb(err);
+    });
+    
+    stream.on('close', function () {
+      if (!error) {
+        cb();
+      }
+    });
   }, (err) => {
     if (err) {
       return finalCb(err);
