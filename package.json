@@ -4,13 +4,13 @@
   "description": "micro-service to get italian municipality data",
   "repository": {
     "type": "git",
-    "url": "https://repo.novigo-consulting.it/scm/mbcs/robot-epc.git"
+    "url": "https://github.com/JuanRamino/comuni-service"
   },
   "engines": {
     "node": ">=8.11"
   },
   "keywords": [],
-  "author": "Andrea Rizzini",
+  "author": "Juan Ramino",
   "license": "ISC",
   "scripts": {
     "lint": "eslint .",
