@@ -28,52 +28,7 @@ const fileComuniRenamed = `${dataPath}/comuni-renamed.csv`;
 
 const jsonFile = `${dataPath}/${COMUNI_JSON_FILE}`;
 
-async.series([
-  (cb) => {
-    getElencoComuni(elencoComuniUrl, fileOutComuni, cb);
-  },
-  (cb) => {
-    getElencoComuni(elencoComuniOldUrl, fileOutComuniOld, cb);
-  },
-  (cb) => {
-    unzip(fileOutComuniOld, fileOutComuniOldCsv, cb);
-  },
-  (cb) => {
-    getElencoComuni(elencoComuniRenameddUrl, fileOutComuniRenamed, cb);
-  },
-  (cb) => {
-    unzip(fileOutComuniRenamed, fileOutComuniRenamedCsv, cb);
-  },
-  (cb) => {
-    checkFiles([
-      fileOutComuni,
-      fileOutComuniOldCsv,
-      fileOutComuniRenamedCsv,
-    ], cb);
-  },
-  (cb) => {
-    fixEncoding([
-      [fileOutComuni, fileComuni],
-      [fileOutComuniOldCsv, fileComuniOld],
-      [fileOutComuniRenamedCsv, fileComuniRenamed],
-    ], cb);
-  },
-  (cb) => {
-    csvToJson({
-      comuni: fileComuni,
-      comuniOld: fileComuniOld,
-      comuniRenamed: fileComuniRenamed,
-    }, jsonFile, cb);
-  },
-], (err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log('DONE');
-  }
-});
-
-function csvToJson(mappedFiles, jsonOut, cb) {
+const csvToJson = (mappedFiles, jsonOut) => (cb) => {
   const parsed = _.mapValues(mappedFiles, (file) =>
     parse(fs.readFileSync(file, 'utf8'), { delimiter: ';', columns: true })
   );
@@ -99,9 +54,9 @@ function csvToJson(mappedFiles, jsonOut, cb) {
   fs.writeFileSync(jsonOut, JSON.stringify(comuni));
 
   cb();
-}
+};
 
-function fixEncoding(files, finalCb) {
+const fixEncoding = (files) => (finalCb) => {
   async.each(files, (file, cb) => {
     // Convert encoding stream
     const stream = fs.createReadStream(file[0])
@@ -126,9 +81,9 @@ function fixEncoding(files, finalCb) {
     }
     finalCb();
   });
-}
+};
 
-function checkFiles(files, cb) {
+const checkFiles = (files) => (cb) => {
   let globalError;
   const checkedFiles = files.map((file) => {
     let error;
@@ -146,9 +101,9 @@ function checkFiles(files, cb) {
     return cb(checkedFiles);
   }
   return cb();
-}
+};
 
-function getElencoComuni(url, output, cb) {
+const getElencoComuni = (url, output) => (cb) => {
   request
     .get(url)
     .on('error', (err) => {
@@ -158,9 +113,9 @@ function getElencoComuni(url, output, cb) {
       cb();
     })
     .pipe(fs.createWriteStream(output));
-}
+};
 
-function unzip(input, output, cb) {
+const unzip = (input, output) => (cb) => {
   yauzl.open(input, {lazyEntries: true}, (err, zipfile) => {
     if (err) {
       return cb(err);
@@ -189,4 +144,26 @@ function unzip(input, output, cb) {
       }
     });
   });
-}
+};
+
+// RUNNER
+async.series([
+  getElencoComuni(elencoComuniUrl, fileOutComuni),
+  getElencoComuni(elencoComuniOldUrl, fileOutComuniOld),
+  unzip(fileOutComuniOld, fileOutComuniOldCsv),
+  getElencoComuni(elencoComuniRenameddUrl, fileOutComuniRenamed),
+  unzip(fileOutComuniRenamed, fileOutComuniRenamedCsv),
+  checkFiles([
+    fileOutComuni,
+    fileOutComuniOldCsv,
+    fileOutComuniRenamedCsv]),
+  fixEncoding([
+    [fileOutComuni, fileComuni],
+    [fileOutComuniOldCsv, fileComuniOld],
+    [fileOutComuniRenamedCsv, fileComuniRenamed]]),
+  csvToJson({
+    comuni: fileComuni,
+    comuniOld: fileComuniOld,
+    comuniRenamed: fileComuniRenamed,
+  }, jsonFile),
+], (err) => console.log(err || 'DONE'));
