@@ -59,7 +59,7 @@ build container
 
 run container
 
-`docker run -d -p 3000:3000 comuni-service`
+`docker run -d -p 3000:3000 comuni-service --env-file ./.env`
 
 update comuni in container
 
