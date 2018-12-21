@@ -10,14 +10,18 @@ Here are URL where it takes the data:
 
 # How it works
 
+### Install dependencies
+
+`npm install`
+
 ### env variable
 
 you need to use these env variables
 
 ```
 NODE_ENV=development
-HOST=127.0.0.1
-PORT=3009
+HOST=0.0.0.0
+PORT=3000
 COMUNI_JSON_FILE=comuni.json
 ```
 
@@ -25,14 +29,13 @@ you can put these in a .env files or use it in CLI
 
 ### Update comuni data
 
-npm run update:comuni
+`npm run update:comuni`
 
 ### Start server
 
-npm run start
+`npm run start`
 
-
-### Routes request example
+# Routes
 
 - /comuni
 ```
@@ -47,3 +50,17 @@ curl -X GET \
   http://127.0.0.1:3009/comuni/brescia \
   -H 'Content-Type: application/json'
 ```
+
+# Docker
+
+build container
+
+`docker build --build-arg PORT=3000 -t comuni-service .`
+
+run container
+
+`docker run -d -p 3000:3000 comuni-service`
+
+update comuni in container
+
+`docker exec -i container_name sh /app/bin/updateComuni.sh`

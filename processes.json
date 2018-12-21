@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "merge_logs": true,
+      "name": "comuni-service",
+      "script": "src/server.js",
+      "out_file": "/tmp/comuni-service.log",
+      "log_date_format": "MM/DD/YYYY HH:mm:ss"
+    }
+  ]
+}

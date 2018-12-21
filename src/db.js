@@ -1,4 +1,3 @@
-require('dotenv').config();
 const fs = require('fs');
 
 const { COMUNI_JSON_FILE } = process.env;

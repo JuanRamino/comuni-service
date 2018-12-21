@@ -10,7 +10,6 @@ router.get('/', function (req, res) {
 
 router.get('/:comune', function (req, res) {
   const name = req.params.comune;
-  console.log(name);
 
   let index = _.findIndex(db, (c) =>
     c['Denominazione in italiano'].toLowerCase() === name.toLowerCase());
