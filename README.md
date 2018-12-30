@@ -16,7 +16,8 @@ Here are URL where it takes the data:
 
 ### env variable
 
-you need to use these env variables
+you need to use these env variables.
+Feel free to change it in order to strict your envoirement rules.
 
 ```
 NODE_ENV=development
@@ -24,8 +25,8 @@ HOST=0.0.0.0
 PORT=3000
 COMUNI_JSON_FILE=comuni.json
 ```
-
-you can put these in a .env files or use it in CLI
+The project has on its dependencies *dotenv*, so
+you can use the .env.example file provided (remove the .example notation) or use it in CLI using *export command* or whatever you like.
 
 ### Update comuni data
 
@@ -39,16 +40,12 @@ you can put these in a .env files or use it in CLI
 
 - /comuni
 ```
-curl -X GET \
-  http://127.0.0.1:3009/comuni \
-  -H 'Content-Type: application/json'
+curl -X GET http://127.0.0.1:3000/comuni -H 'Content-Type: application/json'
 ```
 
 - /comuni/:comune
 ```
-curl -X GET \
-  http://127.0.0.1:3009/comuni/brescia \
-  -H 'Content-Type: application/json'
+curl -X GET http://127.0.0.1:3000/comuni/brescia -H 'Content-Type: application/json'
 ```
 
 # Docker
