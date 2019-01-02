@@ -9,6 +9,6 @@ middleware.afterRouter(app);
 
 const { PORT, HOST } = process.env;
 
-const server = app.listen(PORT, HOST);
+const server = app.listen(PORT, HOST, 0, ()=> console.log(`Server started on port ${PORT}`) );
 
 module.exports = server;

@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "b9478eea-4c60-4782-bf55-0d7d93acaaf2",
+		"name": "Comuni Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all Comuni",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": " application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/comuni",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"comuni"
+					]
+				},
+				"description": "Get all the comuni from the list"
+			},
+			"response": []
+		},
+		{
+			"name": "Get single comune",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": " application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/comuni/brescia",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"comuni",
+						"brescia"
+					]
+				},
+				"description": "Get a comune from the list"
+			},
+			"response": []
+		},
+		{
+			"name": "Get not existing comune",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": " application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/comuni/pippoplutopaperino",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"comuni",
+						"pippoplutopaperino"
+					]
+				},
+				"description": "Get a comune doesn't exist"
+			},
+			"response": []
+		}
+	]
+}
