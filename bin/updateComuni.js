@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
@@ -63,13 +62,13 @@ const fixEncoding = (files) => (finalCb) => {
       .pipe(iconv.decodeStream('win1252'))
       .pipe(iconv.encodeStream('utf8'))
       .pipe(fs.createWriteStream(file[1]));
-    
-    let error; 
+
+    let error;
     stream.on('error', function (err) {
       error = true;
       cb(err);
     });
-    
+
     stream.on('close', function () {
       if (!error) {
         cb();
@@ -116,7 +115,7 @@ const getElencoComuni = (url, output) => (cb) => {
 };
 
 const unzip = (input, output) => (cb) => {
-  yauzl.open(input, {lazyEntries: true}, (err, zipfile) => {
+  yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
     if (err) {
       return cb(err);
     }
