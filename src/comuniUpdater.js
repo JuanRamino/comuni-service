@@ -47,6 +47,7 @@ const csvToJson = (mappedFiles, jsonOut) => (cb) => {
       'Codice Comune formato alfanumerico': comuneOld['Codice Istat del Comune'],
       'Denominazione in italiano': comuneOld['Denominazione'],
       'Sigla automobilistica': comuneOld['Sigla Automobilistica della Provincia'],
+      'Soppresso': 1,
     });
   });
 

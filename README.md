@@ -48,6 +48,16 @@ curl -X GET http://127.0.0.1:3000/comuni -H 'Content-Type: application/json'
 curl -X GET http://127.0.0.1:3000/comuni/brescia -H 'Content-Type: application/json'
 ```
 
+- /regioni
+```
+curl -X GET http://127.0.0.1:3000/regioni -H 'Content-Type: application/json'
+```
+
+- /province
+```
+curl -X GET http://127.0.0.1:3000/province -H 'Content-Type: application/json'
+```
+
 # Docker
 
 build container
