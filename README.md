@@ -78,6 +78,6 @@ update comuni in container
 
 `docker exec -i container_name sh /app/bin/updateComuni.sh`
 
-# Public endpoint
+# Public endpoint
 
 http://comuni-service.webabile.it/
