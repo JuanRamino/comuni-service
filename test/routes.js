@@ -47,7 +47,7 @@ describe('Comuni', () => {
         });
     });
 
-    it('should filter by province', (done) => {
+    it('should filter by provincia', (done) => {
       const provincia = 'bs';
       const rightComune = 'brescia';
       chai.request(app)
@@ -61,7 +61,7 @@ describe('Comuni', () => {
         });
     });
 
-    it('should filter by region', (done) => {
+    it('should filter by regione', (done) => {
       const regione = 'lombardia';
       const wrongComune = 'roma';
       chai.request(app)
@@ -71,6 +71,38 @@ describe('Comuni', () => {
             .filter((c) => c['Denominazione in italiano'].toLowerCase() === wrongComune)
             .should.have.lengthOf(0);
 
+          done();
+        });
+    });
+  });
+});
+
+describe('Regioni', () => {
+  describe('GET', () => {
+
+    it('should get regioni', (done) => {
+      chai.request(app)
+        .get('/regioni')
+        .end((err, res) => {
+          res.should.have.status(200);
+          should.not.exist(err);
+          res.body.should.be.a('array');
+          done();
+        });
+    });
+  });
+});
+
+describe('Province', () => {
+  describe('GET', () => {
+
+    it('should get province', (done) => {
+      chai.request(app)
+        .get('/province')
+        .end((err, res) => {
+          res.should.have.status(200);
+          should.not.exist(err);
+          res.body.should.be.a('array');
           done();
         });
     });
