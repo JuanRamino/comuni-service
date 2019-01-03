@@ -42,6 +42,12 @@ you can use the .env.example file provided (remove the .example notation) or use
 ```
 curl -X GET http://127.0.0.1:3000/comuni -H 'Content-Type: application/json'
 ```
+```
+curl -X GET http://127.0.0.1:3000/comuni?provincia=bs -H 'Content-Type: application/json'
+```
+```
+curl -X GET http://127.0.0.1:3000/comuni?regione=lombardia -H 'Content-Type: application/json'
+```
 
 - /comuni/:comune
 ```

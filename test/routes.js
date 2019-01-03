@@ -46,6 +46,33 @@ describe('Comuni', () => {
           done();
         });
     });
-    
+
+    it('should filter by province', (done) => {
+      const provincia = 'bs';
+      const rightComune = 'brescia';
+      chai.request(app)
+        .get(`/comuni?provincia=${provincia}`)
+        .end((err, res) => {
+          res.body
+            .filter((c) => c['Denominazione in italiano'].toLowerCase() === rightComune)
+            .should.have.lengthOf(1);
+
+          done();
+        });
+    });
+
+    it('should filter by region', (done) => {
+      const regione = 'lombardia';
+      const wrongComune = 'roma';
+      chai.request(app)
+        .get(`/comuni?regione=${regione}`)
+        .end((err, res) => {
+          res.body
+            .filter((c) => c['Denominazione in italiano'].toLowerCase() === wrongComune)
+            .should.have.lengthOf(0);
+
+          done();
+        });
+    });
   });
 });

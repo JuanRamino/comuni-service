@@ -5,7 +5,19 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', function (req, res) {
-  res.send(db);
+  const {regione, provincia} = req.query;
+  let comuni = db;
+  
+  if (provincia) {
+    comuni = comuni.filter((c) => c['Sigla automobilistica'] &&
+      c['Sigla automobilistica'].toLowerCase() === provincia.toLowerCase());
+  } else if (regione) {
+    comuni = comuni.filter((c) => c['Denominazione regione'] &&
+      c['Denominazione regione'].toLowerCase() === regione.toLowerCase()
+    );
+  }
+
+  res.send(comuni);
 });
 
 router.get('/:comune', function (req, res) {
