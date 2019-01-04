@@ -3,7 +3,6 @@ const fs = require('fs');
 const { COMUNI_JSON_FILE } = process.env;
 
 module.exports = (() => {
-  // console.log(process.env);
   const jsonPath = `${__dirname}/../data/${COMUNI_JSON_FILE}`;
 
   if (!fs.existsSync(jsonPath)) {
