@@ -11,15 +11,24 @@ const iconv = require('iconv-lite');
 const { COMUNI_JSON_FILE } = process.env;
 const dataPath = `${__dirname}/../data`;
 
+/**
+ * Comuni file params
+ */
 const elencoComuniUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv';
 const fileOutComuni = `${dataPath}/tmp/comuni.csv`;
 const fileComuni = `${dataPath}/comuni.csv`;
 
+/**
+ * Closed comuni file params
+ */
 const elencoComuniOldUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-soppressi.zip';
 const fileOutComuniOldCsv = `${dataPath}/tmp/comuni-old.csv`;
 const fileOutComuniOld = `${dataPath}/tmp/comuni-old.zip`;
 const fileComuniOld = `${dataPath}/comuni-old.csv`;
 
+/**
+ * Comuni who change name file params
+ */
 const elencoComuniRenameddUrl = 'https://www.istat.it/storage/codici-unita-amministrative/Elenco-denominazioni-precedenti.zip';
 const fileOutComuniRenamed = `${dataPath}/tmp/comuni-renamed.zip`;
 const fileOutComuniRenamedCsv = `${dataPath}/tmp/comuni-renamed.csv`;
@@ -27,13 +36,26 @@ const fileComuniRenamed = `${dataPath}/comuni-renamed.csv`;
 
 const jsonFile = `${dataPath}/${COMUNI_JSON_FILE}`;
 
+/**
+ * Get all the csv and convert it a unique json file
+ * @param {*} mappedFiles 
+ * @param {*} jsonOut 
+ */
 const csvToJson = (mappedFiles, jsonOut) => (cb) => {
+
+  /**
+   * Read all the filee and get result in the parseArray
+   */
   const parsed = _.mapValues(mappedFiles, (file) =>
     parse(fs.readFileSync(file, 'utf8'), { delimiter: ';', columns: true })
   );
 
   const { comuni, comuniOld, comuniRenamed } = parsed;
 
+  /**
+   * Prepare data from renamed comuni.
+   * If in the original comuni source the file already exist update its data with these
+   */
   comuniRenamed.forEach((comuneRenamed) => {
     const index = _.findIndex(comuni, ['Denominazione in italiano', comuneRenamed['Comune cui è associata la denominazione precedente']]);
     if (index > -1) {
@@ -41,6 +63,11 @@ const csvToJson = (mappedFiles, jsonOut) => (cb) => {
     }
   });
 
+
+  /**
+   * Prepare data from Closed comuni.
+   * Each closed comune is new so push it in the original comuni file
+   */
   comuniOld.forEach((comuneOld) => {
     comuni.push({
       'Codice Provincia (1)': comuneOld['Codice Provincia'],
@@ -55,6 +82,10 @@ const csvToJson = (mappedFiles, jsonOut) => (cb) => {
   cb();
 };
 
+/**
+ * Fix the encoding of files from the win1252 to utf8
+ * @param {*} files 
+ */
 const fixEncoding = (files) => (finalCb) => {
   async.each(files, (file, cb) => {
     // Convert encoding stream
@@ -62,13 +93,13 @@ const fixEncoding = (files) => (finalCb) => {
       .pipe(iconv.decodeStream('win1252'))
       .pipe(iconv.encodeStream('utf8'))
       .pipe(fs.createWriteStream(file[1]));
-    
-    let error; 
+
+    let error;
     stream.on('error', function (err) {
       error = true;
       cb(err);
     });
-    
+
     stream.on('close', function () {
       if (!error) {
         cb();
@@ -79,6 +110,10 @@ const fixEncoding = (files) => (finalCb) => {
   });
 };
 
+/**
+ * Check if file exist after creating
+ * @param {*} files 
+ */
 const checkFiles = (files) => (cb) => {
   let globalError;
   const checkedFiles = files.map((file) => {
@@ -99,6 +134,11 @@ const checkFiles = (files) => (cb) => {
   return cb();
 };
 
+/**
+ * Get the file from an existing source
+ * @param {*} url 
+ * @param {*} output 
+ */
 const getElencoComuni = (url, output) => (cb) => {
   request
     .get(url)
@@ -111,8 +151,13 @@ const getElencoComuni = (url, output) => (cb) => {
     .pipe(fs.createWriteStream(output));
 };
 
+/**
+ * Unzip the thefiles coming from comes after download
+ * @param {*} input 
+ * @param {*} output 
+ */
 const unzip = (input, output) => (cb) => {
-  yauzl.open(input, {lazyEntries: true}, (err, zipfile) => {
+  yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
     if (err) {
       return cb(err);
     }
@@ -142,6 +187,9 @@ const unzip = (input, output) => (cb) => {
   });
 };
 
+/**
+ * Start the Import flow
+ */
 module.exports = (cb) => {
   async.series([
     getElencoComuni(elencoComuniUrl, fileOutComuni),
