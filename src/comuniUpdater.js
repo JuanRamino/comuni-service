@@ -77,6 +77,9 @@ const csvToJson = (mappedFiles, jsonOut) => (cb) => {
     });
   });
 
+  /**
+   * Write the file, then pass to cb
+   */
   fs.writeFileSync(jsonOut, JSON.stringify(comuni));
 
   cb();
