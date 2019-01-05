@@ -34,6 +34,10 @@ const fileOutComuniRenamed = `${dataPath}/tmp/comuni-renamed.zip`;
 const fileOutComuniRenamedCsv = `${dataPath}/tmp/comuni-renamed.csv`;
 const fileComuniRenamed = `${dataPath}/comuni-renamed.csv`;
 
+/**
+ * file params
+ */
+const jsonFileTemp = `${dataPath}/tmp/${COMUNI_JSON_FILE}`;
 const jsonFile = `${dataPath}/${COMUNI_JSON_FILE}`;
 
 /**
@@ -42,6 +46,26 @@ const jsonFile = `${dataPath}/${COMUNI_JSON_FILE}`;
  * @param {*} jsonOut 
  */
 const csvToJson = (mappedFiles, jsonOut) => (cb) => {
+
+  /**
+ * Check if two files are identical
+ * If one of Files doenst exist, are not the same file
+ * @param {*} fileOne 
+ * @param {*} fileTwo 
+ */
+  const checkIfFilesAreIdentical = (fileOne, fileTwo) => {
+    if (!fs.existsSync(fileTwo) || !fs.existsSync(fileOne)) {
+      return false;
+    } else {
+      const bufferOne = fs.readFileSync(fileOne);
+      const bufferTwo = fs.readFileSync(fileTwo);
+
+      return bufferOne.equals(bufferTwo);
+    }
+
+  };
+
+
 
   /**
    * Read all the filee and get result in the parseArray
@@ -80,9 +104,19 @@ const csvToJson = (mappedFiles, jsonOut) => (cb) => {
   /**
    * Write the file, then pass to cb
    */
-  fs.writeFileSync(jsonOut, JSON.stringify(comuni));
+  fs.writeFileSync(jsonFileTemp, JSON.stringify(comuni));
 
-  cb();
+  if (checkIfFilesAreIdentical(jsonFileTemp, jsonOut)) {
+    cb(false);
+  } else {
+    /**
+     * Write the comuni json
+     */
+    fs.writeFileSync(jsonOut, JSON.stringify(comuni));
+    cb(true);
+  }
+
+
 };
 
 /**
