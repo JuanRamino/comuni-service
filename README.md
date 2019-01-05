@@ -38,28 +38,83 @@ you can use the .env.example file provided (remove the .example notation) or use
 
 # Routes
 
-- /comuni
-```
-curl -X GET http://127.0.0.1:3000/comuni -H 'Content-Type: application/json'
-```
+**Comuni**
+----
+  Returns json data about all Italian comuni.
+
+* **URL**
+
+  /comuni
+
+* **Method:**
+
+  `GET`
+
+* **Data Params**
+
+  - `provincia=[string]`
+  - `regione=[string]`
+
+* **Example**
+
 ```
 curl -X GET http://127.0.0.1:3000/comuni?provincia=bs -H 'Content-Type: application/json'
 ```
-```
-curl -X GET http://127.0.0.1:3000/comuni?regione=lombardia -H 'Content-Type: application/json'
-```
 
-- /comuni/:comune
+**Comune**
+----
+  Returns json data about a single Italian comune.
+
+* **URL**
+
+  /comuni/:comune
+
+* **Method:**
+
+  `GET`
+
+* **Url Params**
+
+  - `comune=[string]`
+
+* **Example**
+
 ```
 curl -X GET http://127.0.0.1:3000/comuni/brescia -H 'Content-Type: application/json'
 ```
 
-- /regioni
+**Regioni**
+----
+  Returns an array of Italian regioni
+
+* **URL**
+
+  /regioni
+
+* **Method:**
+
+  `GET`
+
+* **Example**
+
 ```
 curl -X GET http://127.0.0.1:3000/regioni -H 'Content-Type: application/json'
 ```
 
-- /province
+**Province**
+----
+  Returns an array of Italian province
+
+* **URL**
+
+  /regioni
+
+* **Method:**
+
+  `GET`
+
+* **Example**
+
 ```
 curl -X GET http://127.0.0.1:3000/province -H 'Content-Type: application/json'
 ```
