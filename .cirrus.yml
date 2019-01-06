@@ -26,4 +26,4 @@ test_task:
     PORT: 3000
     COMUNI_JSON_FILE: comuni.json
 
-  test_script: npm run test
+  test_script: npm run test test/01_updateComuni.js && npm run test test/02_routes.js
