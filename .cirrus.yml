@@ -4,7 +4,7 @@ container:
 lint_task:      
   node_modules_cache:
     folder: node_modules
-    fingerprint_script: cat package.json.lock
+    fingerprint_script: cat package-json.lock
     populate_script: npm install
   
   env:
@@ -18,7 +18,7 @@ test_task:
   
   node_modules_cache:
     folder: node_modules
-    fingerprint_script: cat package.json.lock
+    fingerprint_script: cat package-json.lock
     populate_script: npm install
 
   env:
