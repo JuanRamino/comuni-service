@@ -131,7 +131,7 @@ run container
 
 update comuni in container
 
-`docker exec -i container_name sh /app/bin/updateComuni.sh`
+`docker exec -i container_name node /app/bin/updateComuni.js`
 
 # Public endpoint
 
