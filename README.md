@@ -1,4 +1,4 @@
-https://api.cirrus-ci.com/github/JuanRamino/comuni-service.svg?branch=master
+[![Build Status](https://api.cirrus-ci.com/github/JuanRamino/comuni-service.svg?branch=master)](https://api.cirrus-ci.com/github/JuanRamino/comuni-service.svg?branch=master)    [![Coverage Status](https://coveralls.io/repos/github/JuanRamino/comuni-service/badge.svg)](https://coveralls.io/github/JuanRamino/comuni-service)
 
 # Comuni Service
 
