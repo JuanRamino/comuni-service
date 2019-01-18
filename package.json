@@ -1,6 +1,6 @@
 {
   "name": "comuni-service",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "micro-service to get italian municipality data",
   "repository": {
     "type": "git",
