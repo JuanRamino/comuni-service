@@ -1,3 +1,5 @@
+https://api.cirrus-ci.com/github/JuanRamino/comuni-service.svg?branch=master
+
 # Comuni Service
 
 This is an api that expose Italian municipality information.

@@ -230,10 +230,10 @@ const unzip = (input, output) => (cb) => {
  */
 module.exports = (cb) => {
   async.series([
-    getElencoComuni(elencoComuniUrl, fileOutComuni),
     getElencoComuni(elencoComuniOldUrl, fileOutComuniOld),
-    unzip(fileOutComuniOld, fileOutComuniOldCsv),
     getElencoComuni(elencoComuniRenameddUrl, fileOutComuniRenamed),
+    getElencoComuni(elencoComuniUrl, fileOutComuni),
+    unzip(fileOutComuniOld, fileOutComuniOldCsv),
     unzip(fileOutComuniRenamed, fileOutComuniRenamedCsv),
     checkFiles([
       fileOutComuni,
