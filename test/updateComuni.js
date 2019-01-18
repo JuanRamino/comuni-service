@@ -1,12 +1,11 @@
 require('dotenv').config();
-process.env.NODE_ENV = 'test';
 
 const fs = require('fs');
 const should = require('chai').should(); // eslint-disable-line
 const updater = require('../src/comuniUpdater');
 
 
-describe('updateComuni', function() {
+module.exports = function() {
   this.timeout(10000);
 
   const dataPath = `${__dirname}/../data`;
@@ -46,4 +45,4 @@ describe('updateComuni', function() {
       });
     });
   }
-});
+};
