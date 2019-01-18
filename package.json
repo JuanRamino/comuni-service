@@ -14,7 +14,7 @@
   "license": "ISC",
   "scripts": {
     "lint": "eslint .",
-    "test": "mocha ",
+    "test": "nyc mocha ",
     "start": "node src/server.js",
     "update:comuni": "node bin/updateComuni.js"
   },
@@ -35,7 +35,8 @@
     "chai-http": "^4.2.0",
     "eslint": "^5.10.0",
     "husky": "^1.2.0",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
   },
   "husky": {
     "hooks": {
