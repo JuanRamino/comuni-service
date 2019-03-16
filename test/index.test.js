@@ -17,6 +17,16 @@ describe('Routes', () => {
     app = require('../src/server');
   });
 
+  it('should respond a 404 for not existing API', (done) => {
+    const app = require('../src/server');
+    chai.request(app)
+      .get('/pippo')
+      .end((err, res) => {
+        res.should.have.status(404);
+        done();
+      });
+  });
+
   describe('Comuni', () => {
     describe('GET', () => {
 
